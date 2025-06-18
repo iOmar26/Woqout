@@ -12,5 +12,5 @@
 ##  Run it locally
 ```bash
 pip install -r requirements.txt
-python app.py
+py flask_app(1).py
 
