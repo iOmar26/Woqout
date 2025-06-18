@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>وقوت الصلاة</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&family=Tajawal:wght@400&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0; padding: 0;
+      background: #121212; color: #e0e0e0;
+      font-family: 'Tajawal', sans-serif;
+      display: flex; justify-content: center; align-items: flex-start;
+      min-height: 100vh; text-align: center;
+    }
+
+    .container {
+      background: #1e1e1e;
+      border: 2px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      max-width: 700px;
+      width: 90%;
+      margin: 20px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-family: 'Cairo', sans-serif;
+      font-size: 2.4em;
+      color: #ffcc00;
+      margin-bottom: 0.5em;
+    }
+
+    form {
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      font-size: 1rem;
+    }
+
+    input {
+      background-color: #2a2a2a;
+      color: #e0e0e0;
+    }
+
+    button {
+      background-color: #ffcc00;
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ffd633;
+    }
+
+    .card {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1.6em;
+      text-align: center;
+    }
+
+    .times-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .times-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 1.33rem;
+      line-height: 1.6;
+      border-bottom: 1px solid #333;
+    }
+    .times-list li:last-child {
+      border-bottom: none;
+    }
+
+    .prayer h2 { color: #ff5722; }
+    .night  h2 { color: #03a9f4; }
+    .jumua  h2 { color: #8bc34a; }
+
+    .time {
+      color: #999;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 15px; }
+      h1 { font-size: 2em; }
+      .card h2 { font-size: 1.4em; }
+      .times-list li { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>وقوت الصلاة</h1>
+
+    <form method="POST">
+  <input list="countries" name="country" id="countryInput" placeholder="الدولة (مثل: Saudi Arabia)" required>
+  <datalist id="countries">
+    <option value="Saudi Arabia">
+    <option value="Qatar">
+    <option value="United Arab Emirates">
+    <option value="Kuwait">
+    <option value="Bahrain">
+    <option value="Jordan">
+    <option value="Turkey">
+  </datalist>
+
+  <input list="cities" name="city" id="cityInput" placeholder="المدينة (اختر الدولة أولاً)" required>
+  <datalist id="cities"></datalist>
+
+  <button type="submit">عرض المواقيت</button>
+</form>
+<script>
+  const citiesByCountry = {
+    "Saudi Arabia": ["Riyadh", "Jeddah", "Makkah", "Madinah", "Dammam", "Khobar", "Hofuf"],
+    "Bahrain": ["Manama", "Muharraq", "Riffa", "Isa Town", "Hamad Town"]
+    "Qatar": ["Doha", "Al Rayyan", "Al Wakrah", "Umm Salal", "Al Khor"]
+    "United Arab Emirates": ["Dubai", "Abu Dhabi", "Sharjah"],
+    "Kuwait": ["Kuwait City", "Al Ahmadi", "Hawalli", "Salmiya", "Farwaniya"]
+    "Jordan": ["Amman", "Zarqa", "Irbid"],
+    "Turkey": ["Istanbul", "Ankara", "Izmir"],
+  };
+
+  const countryInput = document.getElementById("countryInput");
+  const citiesDatalist = document.getElementById("cities");
+
+  countryInput.addEventListener("input", () => {
+    const selectedCountry = countryInput.value;
+    const cities = citiesByCountry[selectedCountry] || [];
+
+    // Clear previous options
+    citiesDatalist.innerHTML = "";
+
+    // Populate new city options
+    cities.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      citiesDatalist.appendChild(option);
+    });
+  });
+</script>
+
+
+    {% set sections = output.split('\n\n') %}
+
+    {% set prayer_lines = sections[0].split('\n') %}
+    <div class="card prayer">
+      <h2>أوقات الصلاة اليوم</h2>
+      <ul class="times-list">
+        {% for line in prayer_lines %}
+          {% set parts = line.split(': ') %}
+          <li>
+            <span>{{ parts[0] }}</span>
+            <span class="time">{{ parts[1] }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% set night_lines = sections[1].split('\n') %}
+    <div class="card night">
+      <h2>حساب أجزاء الليل</h2>
+      <ul class="times-list">
+        {% for line in night_lines %}
+          {% set parts = line.split(': ') %}
+          <li>
+            <span>{{ parts[0] }}</span>
+            <span class="time">{{ parts[1] }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% set jumua_lines = sections[2].split('\n') %}
+    <div class="card jumua">
+      <h2>
+        {{ "حساب ساعات الجمعة" if sections[2].startswith("حساب") else "حساب ساعات الجمعة القادمة" }}
+      </h2>
+      <ul class="times-list">
+        {% for line in jumua_lines %}
+          {% set parts = line.split(': ') %}
+          <li>
+            <span>{{ parts[0]|safe }}</span>
+            <span class="time">{{ parts[1] }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
